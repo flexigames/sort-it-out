@@ -7,7 +7,7 @@ import {
   MouseConstraint,
   Runner,
 } from 'matter-js';
-import kaboom, { Comp, PosComp, RotateComp } from 'kaboom';
+import kaboom, { Comp, PosComp, RectComp, RotateComp, TextComp } from 'kaboom';
 
 const engine = Engine.create({ gravity: { scale: 0 } });
 
@@ -28,39 +28,73 @@ const mouseConstraint = MouseConstraint.create(engine, {
 
 Composite.add(engine.world, mouseConstraint);
 
-k.add([
-  k.pos(40, 40),
-  k.rect(50, 50),
+const item = k.add([
+  'item',
+  k.pos(40, k.height() / 2),
+  k.rect(32, 32),
   k.anchor('center'),
   k.color(170, 100, 100),
   matterRect(),
+  k.area(),
   k.rotate(0),
+]);
+
+const score = k.add([
+  k.text('0'),
+  k.pos(k.width() / 2, 40),
+  k.anchor('center'),
+  k.color(0, 0, 0),
+  {
+    score: 0,
+    update(this: TextComp & { score: number }) {
+      this.text = this.score.toString();
+    },
+  },
+]);
+
+item.onCollide('bucket', () => {
+  item.destroy();
+  score.score++;
+});
+
+k.add([
+  'bucket',
+  k.pos(k.width() - 100, k.height() / 2),
+  k.rect(100, 100),
+  k.anchor('center'),
+  k.color(200, 150, 240),
+  k.area(),
 ]);
 
 Runner.run(engine);
 
-type MatterRectComp = {
+type MatterRectContext = {
   body?: Body;
 } & PosComp &
-  RotateComp;
+  RotateComp &
+  RectComp;
 
-function matterRect(): Comp {
+interface MatterRectComp extends Comp {
+  body?: Body;
+}
+
+function matterRect(): MatterRectComp {
   return {
-    require: ['pos', 'rotate'],
-    add(this: MatterRectComp) {
+    require: ['pos', 'rotate', 'rect'],
+    add(this: MatterRectContext) {
       const { x, y } = this.pos;
-      this.body = Bodies.rectangle(x, y, 50, 50);
+      this.body = Bodies.rectangle(x, y, this.width, this.height);
 
       Composite.add(engine.world, this.body);
     },
-    update(this: MatterRectComp) {
+    update(this: MatterRectContext) {
       if (!this.body) return;
 
       this.pos.x = this.body.position.x;
       this.pos.y = this.body.position.y;
       this.angle = (this.body.angle * 180) / Math.PI;
     },
-    destroy(this: MatterRectComp) {
+    destroy(this: MatterRectContext) {
       if (!this.body) return;
 
       Composite.remove(engine.world, this.body);
