@@ -7,7 +7,7 @@ import {
   MouseConstraint,
   Runner,
 } from 'matter-js';
-import kaboom, { Comp, PosComp, RectComp, RotateComp, TextComp } from 'kaboom';
+import kaboom, { Comp, PosComp, RectComp, RotateComp, TextComp, Color } from 'kaboom';
 import { sample } from 'lodash';
 
 const engine = Engine.create({ gravity: { scale: 0 } });
@@ -16,12 +16,12 @@ const k = kaboom({
   global: false,
   width: 600,
   height: 600,
-  background: [230, 210, 210],
+  background: [210, 240, 240],
 });
 
 const colorMap = {
-  red: [140, 40, 40],
-  blue: [40, 40, 140],
+  red: k.Color.fromHex('#EB1F26'),
+  blue: k.Color.fromHex('#05A8DC'),
 };
 
 const mouse = Mouse.create(k.canvas);
