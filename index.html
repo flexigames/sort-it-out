@@ -7,16 +7,28 @@
     <title>Sort it out!</title>
   </head>
   <body>
+    <div class="menu">
+      <button id="button-spawn-rate">Increase spawn rate (5)</button>
+    </div>
     <script type="module" src="/src/main.ts"></script>
     <style>
       body {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: center;
         align-items: center;
         height: 100vh;
         width: 100vw;
         background-color: #222;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .menu {
+        width: 160px;
+        margin: 16px;
       }
     </style>
   </body>

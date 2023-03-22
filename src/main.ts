@@ -7,7 +7,7 @@ import {
   MouseConstraint,
   Runner,
 } from 'matter-js';
-import kaboom, { Comp, PosComp, RectComp, RotateComp, TextComp, Color } from 'kaboom';
+import kaboom, { Comp, PosComp, RectComp, RotateComp, TextComp } from 'kaboom';
 import { sample } from 'lodash';
 
 const engine = Engine.create({ gravity: { scale: 0 } });
@@ -67,8 +67,13 @@ function spawnItem() {
   });
 }
 
-spawnItem();
-setInterval(spawnItem, 1000);
+let timeBetweenSpawnsInSeconds = 3;
+function spawn() {
+  spawnItem();
+  setTimeout(spawn, timeBetweenSpawnsInSeconds * 1000);
+}
+
+spawn();
 
 addBucket('red', { x: k.width() - 100, y: k.height() / 2 - 150 });
 addBucket('blue', { x: k.width() - 100, y: k.height() / 2 + 150 });
@@ -143,3 +148,13 @@ Mouse.setScale(mouse, {
 });
 
 Mouse.setOffset(mouse, { x: 0, y: 0 });
+
+document.querySelector('#button-spawn-rate')?.addEventListener('click', () => {
+  if (score.score >= 5) {
+    console.log('Upgrade bought');
+    score.score -= 5;
+    timeBetweenSpawnsInSeconds *= 0.7;
+  } else {
+    alert('Not enough cash :(');
+  }
+});
