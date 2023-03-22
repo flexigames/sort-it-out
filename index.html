@@ -1,35 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sort it out!</title>
-  </head>
-  <body>
-    <div class="menu">
-      <button id="button-spawn-rate">Increase spawn rate (5)</button>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
-    <style>
-      body {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        width: 100vw;
-        background-color: #222;
-      }
 
-      button {
-        width: 100%;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sort it out!</title>
+</head>
 
-      .menu {
-        width: 160px;
-        margin: 16px;
-      }
-    </style>
-  </body>
+<body>
+  <div class="menu">
+    <button id="button-spawn-rate">Increase spawn rate (5)</button>
+    <button id="buy-minion">Buy Minion (10)</button>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      background-color: #222;
+    }
+
+    button {
+      width: 100%;
+      background-color: white;
+      border: none;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      width: 160px;
+      margin: 16px;
+      gap: 4px;
+    }
+  </style>
+</body>
+
 </html>

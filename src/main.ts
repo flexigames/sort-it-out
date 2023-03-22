@@ -79,8 +79,6 @@ spawn();
 addBucket("red", { x: k.width() - 100, y: k.height() / 2 - 150 });
 addBucket("blue", { x: k.width() - 100, y: k.height() / 2 + 150 });
 
-addMinion();
-
 type Position = {
   x: number;
   y: number;
@@ -216,6 +214,16 @@ document.querySelector("#button-spawn-rate")?.addEventListener("click", () => {
     console.log("Upgrade bought");
     score.score -= 5;
     timeBetweenSpawnsInSeconds *= 0.7;
+  } else {
+    alert("Not enough cash :(");
+  }
+});
+
+document.querySelector("#buy-minion")?.addEventListener("click", () => {
+  if (score.score >= 10) {
+    console.log("Upgrade bought");
+    score.score -= 10;
+    addMinion();
   } else {
     alert("Not enough cash :(");
   }
