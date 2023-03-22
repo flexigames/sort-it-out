@@ -8,6 +8,7 @@ import {
   Runner,
 } from 'matter-js';
 import kaboom, { Comp, PosComp, RectComp, RotateComp, TextComp } from 'kaboom';
+import { sample } from 'lodash';
 
 const engine = Engine.create({ gravity: { scale: 0 } });
 
@@ -18,6 +19,11 @@ const k = kaboom({
   background: [230, 210, 210],
 });
 
+const colorMap = {
+  red: [140, 40, 40],
+  blue: [40, 40, 140],
+};
+
 const mouse = Mouse.create(k.canvas);
 const mouseConstraint = MouseConstraint.create(engine, {
   mouse: mouse,
@@ -27,17 +33,6 @@ const mouseConstraint = MouseConstraint.create(engine, {
 });
 
 Composite.add(engine.world, mouseConstraint);
-
-const item = k.add([
-  'item',
-  k.pos(40, k.height() / 2),
-  k.rect(32, 32),
-  k.anchor('center'),
-  k.color(170, 100, 100),
-  matterRect(),
-  k.area(),
-  k.rotate(0),
-]);
 
 const score = k.add([
   k.text('0'),
@@ -52,19 +47,51 @@ const score = k.add([
   },
 ]);
 
-item.onCollide('bucket', () => {
-  item.destroy();
-  score.score++;
-});
+function spawnItem() {
+  const startVelocity = 0.005;
+  const colorId = sample(Object.keys(colorMap)) as ColorId;
+  const item = k.add([
+    'item',
+    k.pos(40, k.height() / 2),
+    k.rect(32, 32),
+    k.anchor('center'),
+    k.color(colorMap[colorId]),
+    matterRect(startVelocity),
+    k.area(),
+    k.rotate(0),
+  ]);
 
-k.add([
-  'bucket',
-  k.pos(k.width() - 100, k.height() / 2),
-  k.rect(100, 100),
-  k.anchor('center'),
-  k.color(200, 150, 240),
-  k.area(),
-]);
+  item.onCollide('bucket-' + colorId, () => {
+    item.destroy();
+    score.score++;
+  });
+}
+
+spawnItem();
+setInterval(spawnItem, 1000);
+
+addBucket('red', { x: k.width() - 100, y: k.height() / 2 - 150 });
+addBucket('blue', { x: k.width() - 100, y: k.height() / 2 + 150 });
+
+type Position = {
+  x: number;
+  y: number;
+};
+
+type ColorId = keyof typeof colorMap;
+
+function addBucket(colorId: ColorId, position: Position) {
+  k.add([
+    'bucket',
+    'bucket-' + colorId,
+    colorId,
+    k.pos(position.x, position.y),
+    k.rect(100, 100),
+    k.anchor('center'),
+    k.color(colorMap[colorId]),
+    k.area(),
+  ]);
+}
 
 Runner.run(engine);
 
@@ -78,12 +105,13 @@ interface MatterRectComp extends Comp {
   body?: Body;
 }
 
-function matterRect(): MatterRectComp {
+function matterRect(startVelocity: number): MatterRectComp {
   return {
     require: ['pos', 'rotate', 'rect'],
     add(this: MatterRectContext) {
       const { x, y } = this.pos;
       this.body = Bodies.rectangle(x, y, this.width, this.height);
+      this.body.force = { x: startVelocity, y: (Math.random() - 0.5) / 100 };
 
       Composite.add(engine.world, this.body);
     },
